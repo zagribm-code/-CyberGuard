@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGuard - درع الأمان الرقمي</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #0f172a; color: #f8fafc; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .container { max-width: 600px; width: 100%; }
+        header { text-align: center; margin-bottom: 30px; margin-top: 10px; }
+        header h1 { color: #38bdf8; font-size: 2rem; margin-bottom: 8px; }
+        header p { color: #94a3b8; font-size: 0.95rem; }
+        
+        .card { background: #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #334155; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .card h2 { font-size: 1.2rem; color: #f1f5f9; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 1rem; margin-bottom: 12px; outline: none; }
+        input:focus { border-color: #38bdf8; }
+        
+        button { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #0284c7; color: white; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #0369a1; }
+        
+        .result { margin-top: 12px; padding: 10px; border-radius: 6px; font-size: 0.9rem; display: none; }
+        .success { background: #064e3b; color: #6ee7b7; border: 1px solid #047857; }
+        .danger { background: #7f1d1d; color: #fca5a5; border: 1px solid #b91c1c; }
+        .warning { background: #78350f; color: #fde68a; border: 1px solid #b45309; }
+        
+        .checklist { list-style: none; }
+        .checklist li { margin-bottom: 10px; font-size: 0.9rem; color: #cbd5e1; display: flex; align-items: center; gap: 8px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🛡️ CyberGuard</h1>
+            <p>أدوات حماية سريعة لحمايتك من الاختراق والتحايل الرقمي</p>
+        </header>
+
+        <!-- أداة 1: فحص الرابط -->
+        <div class="card">
+            <h2>🔍 فاحص الروابط المشبوهة</h2>
+            <input type="text" id="urlInput" placeholder="ضع الرابط هنا (مثال: https://example.com)">
+            <button onclick="checkURL()">فحص الرابط الان</button>
+            <div id="urlResult" class="result"></div>
+        </div>
+
+        <!-- أداة 2: فحص كلمة المرور -->
+        <div class="card">
+            <h2>🔑 مقياس قوة كلمة المرور</h2>
+            <input type="password" id="passInput" oninput="checkPassword()" placeholder="اكتب كلمة المرور للتجربة...">
+            <div id="passResult" class="result"></div>
+        </div>
+
+        <!-- أداة 3: نصائح سريعة -->
+        <div class="card">
+            <h2>💡 خطوات تحصين حساباتك</h2>
+            <ul class="checklist">
+                <li>✅ فعل ميزة التحقق بخطوتين (2FA) فـ WhatsApp وInstagram.</li>
+                <li>✅ لا تضغط على أي رابط وصلك فـ الرسائل القادمة من أرقام غريبة.</li>
+                <li>✅ لا تستخدم كلمة مرور واحدة لجميع حساباتك.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // فحص الروابط
+        function checkURL() {
+            const url = document.getElementById('urlInput').value.trim();
+            const result = document.getElementById('urlResult');
+            result.style.display = 'block';
+
+            if (!url) {
+                result.className = 'result warning';
+                result.innerText = '⚠️ يرجى إدخال الرابط أولاً.';
+                return;
+            }
+
+            try {
+                const parsed = new URL(url.startsWith('http') ? url : 'http://' + url);
+                
+                // فحص بروتوكول HTTPS والروابط المختصرة
+                if (!parsed.protocol.includes('https')) {
+                    result.className = 'result danger';
+                    result.innerText = '🚨 تحذير: هذا الرابط غير مشفر (HTTP). قد يكون غير آمن!';
+                } else if (parsed.hostname.includes('bit.ly') || parsed.hostname.includes('tinyurl')) {
+                    result.className = 'result warning';
+                    result.innerText = '⚠️ تنبيه: هذا رابط مختصر، انتبه فقد يخفي موقعاً خبيثاً.';
+                } else {
+                    result.className = 'result success';
+                    result.innerText = '✅ الرابط يستخدم بروتوكول آمن (HTTPS). تحقق دائماً من اسم الدومين.';
+                }
+            } catch (e) {
+                result.className = 'result danger';
+                result.innerText = '❌ الرابط غير صحيح، تأكد من الصيغة.';
+            }
+        }
+
+        // فحص كلمة السر
+        function checkPassword() {
+            const pass = document.getElementById('passInput').value;
+            const result = document.getElementById('passResult');
+            
+            if (pass.length === 0) {
+                result.style.display = 'none';
+                return;
+            }
+            
+            result.style.display = 'block';
+
+            let score = 0;
+            if (pass.length >= 8) score++;
+            if (/[A-Z]/.test(pass)) score++;
+            if (/[0-9]/.test(pass)) score++;
+            if (/[^A-Za-z0-9]/.test(pass)) score++;
+
+            if (score <= 1) {
+                result.className = 'result danger';
+                result.innerText = '🔴 كلمة مرور ضعيفة جداً وسهلة الاختراق!';
+            } else if (score === 2 || score === 3) {
+                result.className = 'result warning';
+                result.innerText = '🟡 كلمة مرور متوسطة. أضف رموزاً وأرقاماً أكثر.';
+            } else {
+                result.className = 'result success';
+                result.innerText = '🟢 كلمة مرور قوية وصعبة التكهن!';
+            }
+        }
+    </script>
+</body>
+</html>
